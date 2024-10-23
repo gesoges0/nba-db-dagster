@@ -9,11 +9,16 @@ init
 """
 
 import requests
-from dagster import (AssetExecutionContext, AssetsDefinition, Nothing, asset,
-                     define_asset_job)
+from dagster import (
+    AssetExecutionContext,
+    AssetsDefinition,
+    Nothing,
+    asset,
+    define_asset_job,
+)
 
 from endpoints.base import EndpointJobFactory
-from endpoints.utils import save_result
+from endpoints.utils import save_result, load_result, save_as_jsonl
 
 
 class DailyJobFactory:
@@ -23,6 +28,7 @@ class DailyJobFactory:
 class InitCommonAllPlayersJobFactory:
     def __init__(self):
         self._endpoint_name = "commonallplayers"
+        self._save_name = f"{self._endpoint_name}_initial_result"
 
         # assets
         self._api_response_asset = self._api_response_asset_factory()
@@ -55,7 +61,7 @@ class InitCommonAllPlayersJobFactory:
             # レスポンスを保存
             save_result(
                 result=response.json(),
-                save_name=f"{self._endpoint_name}_initial_result",
+                save_name=self._save_name,
             )
             return
 
@@ -64,7 +70,11 @@ class InitCommonAllPlayersJobFactory:
     def _raw_data_asset_factory(self) -> AssetsDefinition:
         @asset(deps=[self._api_response_asset])
         def _raw_data_asset(context: AssetExecutionContext) -> Nothing:
-            # APIの結果をJSONL形式に変換
+            """APIの結果をJSONL形式に変換"""
+            # レスポンスを取得
+            d = load_result(self._save_name)
+            # 辞書をJSONL形式に変換
+            save_as_jsonl(list_of_dict=d["CommonAllPlayers"], save_name=self._save_name)
             return
 
         return _raw_data_asset
