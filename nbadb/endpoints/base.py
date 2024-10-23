@@ -1,11 +1,7 @@
 import json
-from dagster import (
-    Definitions,
-    AssetsDefinition,
-    asset,
-    AssetExecutionContext,
-    define_asset_job,
-)
+
+from dagster import (AssetExecutionContext, AssetsDefinition, Definitions,
+                     asset, define_asset_job)
 
 
 class RequestedResultConfig:
@@ -25,19 +21,21 @@ class BqConfig:
     table_name: str
 
 
+# _raw_data_asset_factoryのみ子クラスでオーバーライドする
+# そのためにabstractmethodにする
 class EndpointJobFactory:
-    def __init__(self, endpoint_name: str):
+    def __init__(self, endpoint_name: str, config_path: str):
         # リクエストのためのJSONファイルを読み込む
         self._endpoint_name = endpoint_name
-        self._config = json.load(open("config.json"))
+        self._config = json.load(open(config_path))
 
-        self._requested_result_asset = self._requested_result_asset_factory()
+        self._api_response_asset = self._api_response_asset_factory()
         self._raw_data_asset = self._raw_data_asset_factory()
         self._bq_asset = self._bq_asset_factory()
 
     @property
     def assets(self):
-        return [self._requested_result_asset, self._raw_data_asset, self._bq_asset]
+        return [self._api_response_asset, self._raw_data_asset, self._bq_asset]
 
     def create_job(self):
         asset_job = define_asset_job(
@@ -47,19 +45,19 @@ class EndpointJobFactory:
             description="base description",
         )
 
-    def _requested_result_asset_factory(self) -> AssetsDefinition:
+    def _api_response_asset_factory(self) -> AssetsDefinition:
         @asset
-        def _requested_result_asset(
+        def _api_response_asset(
             context: AssetExecutionContext, config: RequestedResultConfig
         ) -> None:
             # Cloud Functionsを叩く
             # リクエストの結果のJSONを表す
             return
 
-        return _requested_result_asset
+        return _api_response_asset
 
     def _raw_data_asset_factory(self) -> AssetsDefinition:
-        @asset
+        @asset(deps=[self._api_response_asset])
         def _raw_data_asset(
             context: AssetExecutionContext, config: RawDataConfig
         ) -> None:
@@ -69,7 +67,7 @@ class EndpointJobFactory:
         return _raw_data_asset
 
     def _bq_asset_factory(self) -> AssetsDefinition:
-        @asset
+        @asset(deps=[self._raw_data_asset])
         def _bq_asset(context: AssetExecutionContext, config: BqConfig) -> None:
             # BigQuery Tableを表す
             return
