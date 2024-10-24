@@ -50,6 +50,7 @@ class InitCommonAllPlayersJobFactory:
     def _api_response_asset_factory(self) -> AssetsDefinition:
         @asset
         def _api_response_asset(context: AssetExecutionContext) -> Nothing:
+            """nba_apiを叩いたレスポンス"""
             # Cloud Functionsを叩く
             url = url = "http://localhost:8080"
             response = requests.get(
@@ -70,7 +71,7 @@ class InitCommonAllPlayersJobFactory:
     def _raw_data_asset_factory(self) -> AssetsDefinition:
         @asset(deps=[self._api_response_asset])
         def _raw_data_asset(context: AssetExecutionContext) -> Nothing:
-            """APIの結果をJSONL形式に変換"""
+            """BQテーブルに保存するための生データ"""
             # レスポンスを取得
             d = load_result(self._save_name)
             # 辞書をJSONL形式に変換
@@ -82,6 +83,7 @@ class InitCommonAllPlayersJobFactory:
     def _bq_table_asset_factory(self) -> AssetsDefinition:
         @asset(deps=[self._raw_data_asset])
         def _bq_table_asset(context: AssetExecutionContext) -> Nothing:
+            """BQテーブル"""
             # bq tableにデータを保存
             return
 
