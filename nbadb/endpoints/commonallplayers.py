@@ -25,10 +25,6 @@ from endpoints.utils import get_jsonl, load_result, save_as_jsonl, save_result
 from helpers import bq
 
 
-class DailyJobFactory:
-    pass
-
-
 class CommonAllPlayersJobFactory:
     def __init__(self):
         self._endpoint_name = "commonallplayers"
