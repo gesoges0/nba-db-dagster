@@ -36,3 +36,8 @@ def save_as_jsonl(list_of_dict: list[dict], save_name: str) -> None:
             for d in list_of_dict:
                 json.dump(d, f)
                 f.write("\n")
+
+
+def get_jsonl(save_name: str) -> list[dict]:
+    with open(LOCAL_RAW_DIR / (save_name + ".jsonl"), mode="r") as f:
+        return [json.loads(line) for line in f]
