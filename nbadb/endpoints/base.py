@@ -3,7 +3,6 @@ import json
 from dagster import (
     AssetExecutionContext,
     AssetsDefinition,
-    Definitions,
     asset,
     define_asset_job,
 )
@@ -49,12 +48,11 @@ class EndpointJobFactory:
             config=self._config["op"],
             description="base description",
         )
+        return asset_job
 
     def _api_response_asset_factory(self) -> AssetsDefinition:
         @asset
-        def _api_response_asset(
-            context: AssetExecutionContext, config: RequestedResultConfig
-        ) -> None:
+        def _api_response_asset(context: AssetExecutionContext, config: RequestedResultConfig) -> None:
             # Cloud Functionsを叩く
             # リクエストの結果のJSONを表す
             return
@@ -63,9 +61,7 @@ class EndpointJobFactory:
 
     def _raw_data_asset_factory(self) -> AssetsDefinition:
         @asset(deps=[self._api_response_asset])
-        def _raw_data_asset(
-            context: AssetExecutionContext, config: RawDataConfig
-        ) -> None:
+        def _raw_data_asset(context: AssetExecutionContext, config: RawDataConfig) -> None:
             # リクエストの結果のJSONから加工したJSONを表す
             return
 

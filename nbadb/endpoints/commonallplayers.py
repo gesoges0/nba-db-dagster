@@ -1,26 +1,15 @@
-"""
-endpoint: commonallplayer
-daily
-  params:
-      season: 
-つねにテーブルを更新する
-"""
-
 import json
-from datetime import datetime
 
 import requests
 from dagster import (
     AssetExecutionContext,
     AssetsDefinition,
     Nothing,
-    TimeWindowPartitionsDefinition,
     asset,
     define_asset_job,
 )
 from dagster_gcp import BigQueryResource
 
-from endpoints.base import EndpointJobFactory
 from endpoints.utils import get_jsonl, load_result, save_as_jsonl, save_result
 from helpers import bq
 
@@ -84,22 +73,18 @@ class CommonAllPlayersJobFactory:
 
     def _bq_table_asset_factory(self) -> AssetsDefinition:
         @asset(deps=[self._raw_data_asset])
-        def _bq_table_asset(
-            context: AssetExecutionContext, bigquery: BigQueryResource
-        ) -> Nothing:
+        def _bq_table_asset(context: AssetExecutionContext, bigquery: BigQueryResource) -> Nothing:
             """BQテーブル"""
             list_of_dict: list[dict] = get_jsonl(self._save_name)
 
             # infra/terraform/bigquery/commonallplayers.json からスキーマを取得
             # FIXME: configで指定できるようにする
-            with open(
-                "../infra/terraform/bigquery/commonallplayers.json", mode="r"
-            ) as f:
+            with open("../infra/terraform/bigquery/commonallplayers.json", mode="r") as f:
                 schema = json.load(f)
 
             # BQ側にある選手の重複を排除して挿入する
             with bigquery.get_client() as client:
-                job = client.load_table_from_json(
+                client.load_table_from_json(
                     json_rows=list_of_dict,
                     destination=f"{bigquery.project}.nba.{self._table_name}",
                     job_config=bq.build_load_job_config(schema),

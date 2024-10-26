@@ -1,5 +1,6 @@
 nbadb/results
 nbadb/raw_data
+nbadb/tmp*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
