@@ -2,6 +2,11 @@ nbadb/results
 nbadb/raw_data
 nbadb/tmp*
 
+infra/terraform/.terraform.lock.hcl
+infra/terraform/.terraform/
+infra/terraform/terraform.tfstate
+infra/terraform/terraform.tfstate.backup
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

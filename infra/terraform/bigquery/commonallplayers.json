@@ -1,0 +1,82 @@
+[
+    {
+        "name": "DISPLAY_FIRST_LAST",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "DISPLAY_LAST_COMMA_FIRST",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "FROM_YEAR",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "GAMES_PLAYED_FLAG",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "OTHERLEAGUE_EXPERIENCE_CH",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "PERSON_ID",
+        "type": "INTEGER",
+        "mode": "REQUIRED"
+    },
+    {
+        "name": "PLAYERCODE",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "PLAYER_SLUG",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "ROSTERSTATUS",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "TEAM_ABBREVIATION",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "TEAM_CITY",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "TEAM_CODE",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "TEAM_ID",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "TEAM_NAME",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "TEAM_SLUG",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "TO_YEAR",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    }
+]
