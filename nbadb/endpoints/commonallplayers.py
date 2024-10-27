@@ -1,15 +1,8 @@
 import json
 
 import requests
-from dagster import (
-    AssetExecutionContext,
-    AssetsDefinition,
-    Nothing,
-    asset,
-    define_asset_job,
-)
+from dagster import AssetExecutionContext, AssetsDefinition, Nothing, asset, define_asset_job
 from dagster_gcp import BigQueryResource
-
 from endpoints.utils import get_jsonl, load_result, save_as_jsonl, save_result
 from helpers import bq
 
@@ -17,7 +10,7 @@ from helpers import bq
 class CommonAllPlayersJobFactory:
     def __init__(self):
         self._endpoint_name = "commonallplayers"
-        self._save_name = f"{self._endpoint_name}_initial_result"
+        self._save_name = f"{self._endpoint_name}"
         self._table_name = "commonallplayers"
 
         # assets
@@ -38,7 +31,7 @@ class CommonAllPlayersJobFactory:
         )
 
     def _api_response_asset_factory(self) -> AssetsDefinition:
-        @asset
+        @asset(name=f"{self._endpoint_name}_api_response")
         def _api_response_asset(context: AssetExecutionContext) -> Nothing:
             """nba_apiを叩いたレスポンス"""
             # Cloud Functionsを叩く
@@ -50,32 +43,32 @@ class CommonAllPlayersJobFactory:
             # レスポンスを保存
             save_result(
                 result=response.json(),
-                save_name=f"{self._save_name}",
+                save_name=f"{self._save_name}/init",
             )
             return
 
         return _api_response_asset
 
     def _raw_data_asset_factory(self) -> AssetsDefinition:
-        @asset(deps=[self._api_response_asset])
+        @asset(name=f"{self._endpoint_name}_raw_data", deps=[self._api_response_asset])
         def _raw_data_asset(context: AssetExecutionContext) -> Nothing:
             """BQテーブルに保存するための生データ"""
             # レスポンスを取得
-            d = load_result(f"{self._save_name}")
+            d = load_result(f"{self._save_name}/init")
             # 辞書をJSONL形式に変換
             save_as_jsonl(
                 list_of_dict=d["CommonAllPlayers"],
-                save_name=f"{self._save_name}",
+                save_name=f"{self._save_name}/init",
             )
             return
 
         return _raw_data_asset
 
     def _bq_table_asset_factory(self) -> AssetsDefinition:
-        @asset(deps=[self._raw_data_asset])
+        @asset(name=f"{self._endpoint_name}_bq_table", deps=[self._raw_data_asset])
         def _bq_table_asset(context: AssetExecutionContext, bigquery: BigQueryResource) -> Nothing:
             """BQテーブル"""
-            list_of_dict: list[dict] = get_jsonl(self._save_name)
+            list_of_dict: list[dict] = get_jsonl(f"{self._save_name}/init")
 
             # infra/terraform/bigquery/commonallplayers.json からスキーマを取得
             # FIXME: configで指定できるようにする

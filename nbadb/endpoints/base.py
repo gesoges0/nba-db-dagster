@@ -1,11 +1,6 @@
 import json
 
-from dagster import (
-    AssetExecutionContext,
-    AssetsDefinition,
-    asset,
-    define_asset_job,
-)
+from dagster import AssetExecutionContext, AssetsDefinition, asset, define_asset_job
 
 
 class RequestedResultConfig:
