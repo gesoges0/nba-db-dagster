@@ -1,5 +1,6 @@
-from nba_api.live.nba.endpoints import scoreboard
 from datetime import datetime
+
+from nba_api.live.nba.endpoints import scoreboard
 
 
 def get_nba_season(date_str):

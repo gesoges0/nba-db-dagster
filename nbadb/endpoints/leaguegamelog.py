@@ -5,7 +5,6 @@ from datetime import datetime
 import requests
 from dagster import AssetExecutionContext, AssetsDefinition, DailyPartitionsDefinition, Nothing, asset, define_asset_job
 from dagster_gcp import BigQueryResource
-
 from endpoints.utils import (
     PLAYER_OR_TEAM_ABBREVIATIONS,
     SEASON_TYPES,
