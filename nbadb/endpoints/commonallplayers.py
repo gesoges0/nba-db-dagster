@@ -3,6 +3,7 @@ import json
 import requests
 from dagster import AssetExecutionContext, AssetsDefinition, Nothing, asset, define_asset_job
 from dagster_gcp import BigQueryResource
+
 from endpoints.utils import get_jsonl, load_result, save_as_jsonl, save_result
 from helpers import bq
 

@@ -4,11 +4,13 @@ from pathlib import Path
 
 STATS_BEGINNING_YEAR = 1946
 SEASON_TYPES = {"regular": "Regular Season", "playoffs": "Playoffs"}  # preseason, all_starは除外
-PLAYER_OR_TEAM_ABBREVIATIONS = ["T", "P"]  # T: team, P: player
+PLAYER_OR_TEAM_ABBREVIATIONS = {"T": "team", "P": "player"}  # T: team, P: player
 
 
 LOCAL_SAVE_DIR = Path("./results")
 LOCAL_RAW_DIR = Path("./raw_data")
+
+CF_EMU_URL = "http://localhost:8080"
 
 
 def _get_result_local_save_path(save_name: str) -> Path:
