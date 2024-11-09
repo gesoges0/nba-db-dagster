@@ -1,6 +1,8 @@
+import glob
 import json
 import os
 from pathlib import Path
+from typing import Iterator
 
 STATS_BEGINNING_YEAR = 1946
 SEASON_TYPES = {"regular": "Regular Season", "playoffs": "Playoffs"}  # preseason, all_starは除外
@@ -59,6 +61,11 @@ def get_jsonl(save_name: str) -> list[dict]:
         return [json.loads(line) for line in f]
 
 
+def get_jsonl_from_path(path: str) -> list[dict]:
+    with open(path, mode="r") as f:
+        return [json.loads(line) for line in f]
+
+
 def is_exists(file_name, file_type):
     assert file_type in ["raw", "result"], "file_type must be 'raw' or 'result'"
 
@@ -76,3 +83,30 @@ def is_exists(file_name, file_type):
 
 def build_season_name(year: int) -> str:
     return f"{year}-{str(year+1)[2:]}"
+
+
+def file_glob_iterator(glob_pattern: str, file_type: str | None = None):
+    if os.environ.get("ENV") == "CF":
+        pass
+    else:
+        if file_type == "raw":
+            glob_pattern = str(LOCAL_RAW_DIR / glob_pattern)
+        for path in glob.glob(glob_pattern):
+            yield path
+
+
+def get_len_jsonl_in_raw_dir(_glob_pattern: str) -> int:
+    """rawファイルを格納するディレクトリ下にあるすべてのJSONLファイルの合計行数を返す"""
+    glob_pattern = str(LOCAL_RAW_DIR / _glob_pattern)
+    if os.environ.get("ENV") == "CF":
+        pass
+    else:
+        res = 0
+        for jsonl_path in file_glob_iterator(glob_pattern):  # type: ignore
+            res += count_lines(jsonl_path)
+        return res
+
+
+def count_lines(path: str) -> int:
+    with open(path, mode="r") as f:
+        return sum(1 for _ in f)
