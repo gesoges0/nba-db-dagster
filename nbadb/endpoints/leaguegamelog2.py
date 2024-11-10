@@ -286,7 +286,9 @@ class InitLeagueGameLogJobFactory2:
                     season = build_season_name(year)
                     jsonl = f"{self._endpoint_name}2/season={season}/player_or_team_abbreviation={p_or_t}/data"
                     list_of_dict = get_jsonl(jsonl)
-                    table_name = f"{self._endpoint_name}2_{suffix}" + ("_B2000" if year < 2000 else "_A2000")
+                    table_name = f"{self._endpoint_name}2_{suffix}" + (
+                        "_B2000" if year < 2000 else "_A2000"
+                    )  # 1999-2000シーズンの2000年代のデータが_B2000になっていることに注意
                     context.log.info(f"{p_or_t=}, {season=}, {jsonl=}, {len(list_of_dict)=}")
                     with bigquery.get_client() as client:
                         try:
