@@ -147,7 +147,7 @@ class LeagueGameLogJobFactory2:
                 + ("_B2000" if season[0] == "1" else "_A2000")
                 + f"${partition_start_date.replace('-', '')}"
             )
-            with open(f"../infra/terraform/bigquery/leaguegamelog2_{suffix}.json", mode="r") as f:
+            with open(f"../infra/terraform/bigquery/leaguegamelog2_{suffix}_A2000.json", mode="r") as f:
                 schema = json.load(f)
 
                 jsonl = f"{self._endpoint_name}2/season={season}/player_or_team_abbreviation={p_or_t}/data"
@@ -158,7 +158,7 @@ class LeagueGameLogJobFactory2:
                         json_rows=list_of_dict,
                         destination=f"{bigquery.project}.nba.{table_name}",
                         job_config=bq.build_load_job_config(schema),
-                    )
+                    ).result()
 
             return
 

@@ -11,6 +11,7 @@ PLAYER_OR_TEAM_ABBREVIATIONS = {"T": "team", "P": "player"}  # T: team, P: playe
 
 LOCAL_SAVE_DIR = Path("./results")
 LOCAL_RAW_DIR = Path("./raw_data")
+LOCAL_MEMO_DIR = Path("./memos")
 
 CF_EMU_URL = "http://localhost:8080"
 
@@ -23,6 +24,10 @@ def _get_raw_local_save_path(save_name: str) -> Path:
     return LOCAL_RAW_DIR / (save_name + ".jsonl")
 
 
+def _get_memo_local_save_path(save_name: str) -> Path:
+    return LOCAL_MEMO_DIR / (save_name + ".json")
+
+
 def save_result(result: dict, save_name: str) -> None:
     if os.environ.get("ENV") == "CF":
         pass
@@ -33,11 +38,30 @@ def save_result(result: dict, save_name: str) -> None:
             json.dump(result, f)
 
 
+def save_memo(memo: dict, save_name: str) -> None:
+    if os.environ.get("ENV") == "CF":
+        pass
+    else:
+        save_path = _get_memo_local_save_path(save_name)
+        save_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(save_path, mode="w") as f:
+            json.dump(memo, f)
+
+
 def load_result(save_name: str) -> dict:  # type: ignore
     if os.environ.get("ENV") == "CF":
         pass
     else:
         save_path = LOCAL_SAVE_DIR / (save_name + ".json")
+        with open(save_path, mode="r") as f:
+            return json.load(f)
+
+
+def load_memo(save_name: str) -> dict:  # type: ignore
+    if os.environ.get("ENV") == "CF":
+        pass
+    else:
+        save_path = LOCAL_MEMO_DIR / (save_name + ".json")
         with open(save_path, mode="r") as f:
             return json.load(f)
 
@@ -67,7 +91,7 @@ def get_jsonl_from_path(path: str) -> list[dict]:
 
 
 def is_exists(file_name, file_type):
-    assert file_type in ["raw", "result"], "file_type must be 'raw' or 'result'"
+    assert file_type in ["raw", "result", "memo"], "file_type must be 'raw' or 'result'"
 
     if os.environ.get("ENV") == "CF":
         pass
@@ -75,8 +99,10 @@ def is_exists(file_name, file_type):
     else:
         if file_type == "raw":
             target_path = _get_raw_local_save_path(file_name)
-        else:
+        elif file_type == "result":
             target_path = _get_result_local_save_path(file_name)
+        else:
+            target_path = _get_memo_local_save_path(file_name)
 
         return target_path.exists()
 

@@ -1,0 +1,5 @@
+{
+    "partition_column": "_GAME_DATE",
+    "partition_type": "DAY",
+    "description": "(選手, 試合)に関する詳細スタッツ"
+}
