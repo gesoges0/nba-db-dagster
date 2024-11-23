@@ -1,0 +1,1 @@
+{{ generate_total_query('FG3M') }}
