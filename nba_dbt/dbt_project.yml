@@ -38,3 +38,5 @@ models:
       +materialized: view
     interesting:
       +materialized: view
+    utils:
+      +materialized: view
