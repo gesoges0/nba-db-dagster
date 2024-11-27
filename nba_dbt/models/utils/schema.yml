@@ -1,0 +1,18 @@
+version: 2
+
+models:
+  - name: final_game_date
+    columns:
+      - name: season_id
+        type: string
+      - name: final_game_date
+        type: date
+
+  - name: final_matchup
+    columns:
+      - name: season_id
+        type: string
+      - name: winner
+        type: string
+      - name: loser
+        type: string
